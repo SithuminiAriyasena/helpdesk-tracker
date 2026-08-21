@@ -31,7 +31,10 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col bg-navy-800 text-slate-300 md:flex">
-      <div className="flex items-center gap-2.5 px-6 py-6">
+      <NavLink
+        to="/login"
+        className="flex items-center gap-2.5 px-6 py-6 transition-opacity hover:opacity-80 cursor-pointer"
+      >
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-500">
           <LifeBuoy size={18} className="text-white" />
         </div>
@@ -39,7 +42,7 @@ export default function Sidebar() {
           <p className="font-display text-[15px] font-bold leading-tight text-white">HelpDesk</p>
           <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">Tracker</p>
         </div>
-      </div>
+      </NavLink>
 
       <nav className="mt-2 flex-1 space-y-1 px-3">
         {nav.map(({ to, label, icon: Icon }) => (

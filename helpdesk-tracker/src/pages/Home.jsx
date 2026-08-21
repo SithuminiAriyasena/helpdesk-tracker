@@ -1,0 +1,401 @@
+import { Link } from 'react-router-dom'
+import { LifeBuoy, Zap, Shield, BarChart3, Clock, CheckCircle, ArrowRight, Menu, X } from 'lucide-react'
+import { useState } from 'react'
+
+const FEATURES = [
+  { icon: Zap, title: 'Fast Resolution', desc: 'AI-powered ticket routing gets issues to the right team instantly.' },
+  { icon: Shield, title: 'Secure & Reliable', desc: 'Enterprise-grade security keeps your support data safe at all times.' },
+  { icon: BarChart3, title: 'Real-time Analytics', desc: 'Track SLA performance, agent productivity, and CSAT scores live.' },
+  { icon: Clock, title: '24/7 Automation', desc: 'Automate repetitive tasks so your team focuses on what matters.' },
+]
+
+const STATS = [
+  { value: '10k+', label: 'Tickets Resolved' },
+  { value: '98%', label: 'Customer Satisfaction' },
+  { value: '< 2h', label: 'Avg. Response Time' },
+  { value: '500+', label: 'Teams Onboarded' },
+]
+
+export default function Home() {
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  return (
+    <div className="min-h-screen bg-[#0d1b2e] text-white overflow-x-hidden">
+
+      {/* ── Navbar ─────────────────────────────────────────── */}
+      <header className="fixed inset-x-0 top-0 z-50 backdrop-blur-md bg-[#0d1b2e]/80 border-b border-white/10">
+        <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg group-hover:scale-105 transition-transform">
+              <LifeBuoy size={18} className="text-white" />
+            </div>
+            <div>
+              <p className="text-[15px] font-bold leading-tight text-white">HelpDesk</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-violet-400">Tracker</p>
+            </div>
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+            <a href="#stats" className="hover:text-white transition-colors">Stats</a>
+            <a href="#about" className="hover:text-white transition-colors">About</a>
+          </nav>
+
+          {/* CTA */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              to="/login"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/login"
+              className="rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-lg hover:from-violet-500 hover:to-indigo-500 transition-all hover:scale-105 active:scale-95"
+            >
+              Get Started →
+            </Link>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-slate-300 hover:text-white"
+            onClick={() => setMobileOpen(o => !o)}
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className="md:hidden border-t border-white/10 bg-[#0d1b2e] px-6 py-4 flex flex-col gap-4">
+            <a href="#features" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>Features</a>
+            <a href="#stats" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>Stats</a>
+            <Link to="/login" className="mt-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-center text-sm font-semibold text-white" onClick={() => setMobileOpen(false)}>Get Started →</Link>
+          </div>
+        )}
+      </header>
+
+      {/* ── Hero ────────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+        {/* Gradient blobs */}
+        <div className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-violet-700/20 blur-[120px]" />
+        <div className="pointer-events-none absolute -bottom-40 right-0 h-[500px] w-[500px] rounded-full bg-indigo-700/20 blur-[120px]" />
+
+        <div className="relative mx-auto max-w-7xl px-6 grid md:grid-cols-2 gap-16 items-center">
+
+          {/* Left — headline */}
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-violet-500/40 bg-violet-500/10 px-4 py-1.5 text-xs font-semibold text-violet-300 mb-8">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
+              Help desk automation
+            </span>
+
+            <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.08] tracking-tight mb-6">
+              Automate your{' '}
+              <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+                help desk.
+              </span>
+              <br />
+              Elevate support<br />experiences.
+            </h1>
+
+            <p className="text-slate-400 text-lg leading-relaxed max-w-md mb-10">
+              Put your help desk on auto-pilot. Cut down manual effort and boost productivity
+              with smart routing, real-time analytics, and AI-powered automation.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-7 py-3.5 text-base font-semibold text-white shadow-xl hover:from-violet-500 hover:to-indigo-500 hover:scale-105 active:scale-95 transition-all"
+              >
+                Get Started Free <ArrowRight size={16} />
+              </Link>
+              <a
+                href="#features"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-7 py-3.5 text-base font-semibold text-white hover:bg-white/10 transition-all"
+              >
+                See Features
+              </a>
+            </div>
+
+            {/* Social proof */}
+            <div className="mt-10 flex items-center gap-3 text-sm text-slate-400">
+              <div className="flex -space-x-2">
+                {['V', 'A', 'M', 'K'].map((l, i) => (
+                  <div key={i} className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-[#0d1b2e] ${['bg-violet-500','bg-indigo-500','bg-pink-500','bg-cyan-500'][i]}`}>{l}</div>
+                ))}
+              </div>
+              <span><strong className="text-white">500+</strong> teams already on board</span>
+            </div>
+          </div>
+
+          {/* Right — Login card */}
+          <div className="relative">
+            {/* Glow behind card */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-600/30 to-indigo-600/30 blur-2xl scale-110 pointer-events-none" />
+
+            <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
+              <div className="mb-6 text-center">
+                <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 mb-4 shadow-lg">
+                  <LifeBuoy size={22} className="text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-white">Welcome to HelpDesk Tracker</h2>
+                <p className="text-sm text-slate-400 mt-1">Sign in to manage your tickets</p>
+              </div>
+
+              {/* Quick feature checklist */}
+              <ul className="space-y-3 mb-8">
+                {[
+                  'Smart ticket auto-assignment',
+                  'Real-time SLA monitoring',
+                  'Role-based access (Admin / User)',
+                  'Priority & category management',
+                ].map(item => (
+                  <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
+                    <CheckCircle size={16} className="shrink-0 text-violet-400" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to="/login"
+                className="block w-full rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 py-3.5 text-center text-base font-semibold text-white shadow-lg hover:from-violet-500 hover:to-indigo-500 hover:scale-[1.02] active:scale-95 transition-all"
+              >
+                Sign In to Your Account
+              </Link>
+
+              <p className="mt-4 text-center text-xs text-slate-500">
+                No account? Contact your administrator.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats ──────────────────────────────────────────── */}
+      <section id="stats" className="border-y border-white/10 bg-white/[0.02] py-14">
+        <div className="mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {STATS.map(({ value, label }) => (
+            <div key={label}>
+              <p className="text-4xl font-extrabold bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">{value}</p>
+              <p className="mt-1 text-sm text-slate-400">{label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Features ───────────────────────────────────────── */}
+      <section id="features" className="py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center mb-16">
+            <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">Why teams love it</p>
+            <h2 className="text-4xl font-extrabold text-white">Everything you need to run a<br />world-class help desk</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {FEATURES.map(({ icon: Icon, title, desc }) => (
+              <div
+                key={title}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 hover:border-violet-500/40 transition-all hover:-translate-y-1"
+              >
+                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600/40 to-indigo-600/40 group-hover:from-violet-600/60 group-hover:to-indigo-600/60 transition-all">
+                  <Icon size={20} className="text-violet-300" />
+                </div>
+                <h3 className="font-bold text-white mb-2">{title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── CTA Banner ─────────────────────────────────────── */}
+      <section id="about" className="relative py-24 px-6 overflow-hidden">
+        {/* deep navy gradient bg */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0d1b2e] via-[#0a1628] to-[#060e1c]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#3730a3_0%,_transparent_70%)] opacity-30" />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-snug mb-8">
+            Want to explore how you can put your help desk
+            operations on auto-pilot with HelpDesk Tracker?
+            <span className="text-yellow-400"> Talk to our experts today!</span>
+          </h2>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 rounded-xl bg-yellow-400 px-9 py-4 text-base font-bold text-gray-900 shadow-xl hover:bg-yellow-300 hover:scale-105 active:scale-95 transition-all"
+          >
+            Sign in &amp; get started <ArrowRight size={17} />
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Quick Links Bar ────────────────────────────────── */}
+      <div className="bg-[#060e1c] border-y border-white/10">
+        <div className="mx-auto max-w-3xl flex items-center justify-center gap-10 py-5">
+          {[
+            { icon: BarChart3, label: 'Live Demo' },
+            { icon: ArrowRight, label: 'Compare' },
+            { icon: Zap, label: 'Get Quote' },
+          ].map(({ icon: Icon, label }) => (
+            <Link
+              key={label}
+              to="/login"
+              className="flex flex-col items-center gap-1.5 text-slate-400 hover:text-white transition-colors group"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 group-hover:border-violet-500/50 transition-colors">
+                <Icon size={16} />
+              </div>
+              <span className="text-xs font-medium">{label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Footer ─────────────────────────────────────────── */}
+      <footer className="bg-[#111827]">
+
+        {/* Hotline bar */}
+        <div className="border-b border-white/10 py-3 text-center text-sm text-slate-300">
+          <span className="inline-flex items-center gap-2">
+            <svg className="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.897 1.368l.758 2.275a2 2 0 01-.45 2.07L8.34 9.858a16.016 16.016 0 006.802 6.802l1.145-1.145a2 2 0 012.07-.45l2.275.758A2 2 0 0121 17.72V20a2 2 0 01-2 2h-1C9.716 22 2 14.284 2 5V4a2 2 0 012-2h-.001z"/>
+            </svg>
+            To reach support, call&nbsp;
+            <strong className="text-white text-base tracking-widest">+94 117 551 111</strong>
+          </span>
+        </div>
+
+        {/* Office addresses */}
+        <div className="mx-auto max-w-7xl px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 border-b border-white/10">
+          {[
+            {
+              region: 'SL',
+              lines: [
+                '147 Old Kottawa Road, Nugegoda 10250, Sri Lanka',
+                '24/7 Hotline: +94117551111',
+                'email: colombo.office@helpdesk.com',
+                '💬 WhatsApp: +94711222002',
+              ],
+            },
+            {
+              region: 'USA',
+              lines: [
+                '4364 Cranwood Parkway,',
+                'Warrensville Heights, OH 44128, USA',
+                'Phone: +1-888-502-5244',
+                'email: us.office@helpdesk.com',
+              ],
+            },
+            {
+              region: 'UK',
+              lines: [
+                '145-157 St John Street, London',
+                'EC1V 4PY, United Kingdom',
+                'Phone: +44-203-769-0961',
+                'email: london.office@helpdesk.com',
+              ],
+            },
+            {
+              region: 'AUS',
+              lines: [
+                '440 Collins St, Level 9, #331,',
+                'Melbourne VIC 3000',
+                'Phone: +61-391-112-322',
+                'email: melbourne.office@helpdesk.com',
+              ],
+            },
+          ].map(({ region, lines }) => (
+            <div key={region} className="flex gap-4">
+              <span className="text-sm font-bold text-violet-400 w-10 shrink-0 pt-0.5">{region}:</span>
+              <div className="space-y-1">
+                {lines.map((l, i) => (
+                  <p key={i} className={`text-xs leading-relaxed ${i === 0 ? 'text-slate-200 font-medium' : 'text-slate-400'}`}>{l}</p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* App / sell row */}
+        <div className="mx-auto max-w-7xl px-6 py-7 flex flex-wrap items-center justify-center gap-4 border-b border-white/10">
+          {/* Sell CTA */}
+          <a href="#" className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition-all">
+            <LifeBuoy size={16} className="text-violet-400" />
+            Partner with us
+          </a>
+
+          {/* App Store */}
+          <a href="#" className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-4 py-2 hover:bg-white/10 transition-all">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            <span className="text-xs text-left leading-tight">
+              <span className="block text-slate-400 text-[9px]">Download on the</span>
+              <span className="block text-white font-semibold text-sm">App Store</span>
+            </span>
+          </a>
+
+          {/* Google Play */}
+          <a href="#" className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-4 py-2 hover:bg-white/10 transition-all">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.18 23.76c.3.17.64.24.99.19l12.6-7.27-2.79-2.79-10.8 9.87zM.4 1.15A1.5 1.5 0 000 2.13v19.74c0 .39.14.73.4 1l.06.05 11.06-11.06v-.26L.46 1.1l-.06.05zm19.1 10.2l-2.83-1.63-3.13 3.13 3.13 3.13 2.86-1.65c.82-.47.82-1.51-.03-1.98zm-18.32 11.4l12.6-7.27-2.79-2.79L.18 21.6z" className="fill-[#4CAF50]"/>
+            </svg>
+            <span className="text-xs text-left leading-tight">
+              <span className="block text-slate-400 text-[9px]">GET IT ON</span>
+              <span className="block text-white font-semibold text-sm">Google Play</span>
+            </span>
+          </a>
+        </div>
+
+        {/* Policy links */}
+        <div className="mx-auto max-w-3xl px-6 py-5 text-center border-b border-white/10">
+          <nav className="flex flex-wrap justify-center items-center gap-x-1 gap-y-2 text-sm text-slate-400 mb-2">
+            {['About us', 'Reviews', 'Refund & Returns', 'Careers', 'FAQs'].map((item, i, arr) => (
+              <span key={item} className="flex items-center gap-1">
+                <a href="#" className="hover:text-white transition-colors">{item}</a>
+                {i < arr.length - 1 && <span className="text-slate-600">|</span>}
+              </span>
+            ))}
+          </nav>
+          <p className="text-xs text-slate-500">
+            HelpDesk Tracker — Smart support for{' '}
+            <span className="text-violet-400 font-medium">teams around the world</span>.
+          </p>
+        </div>
+
+        {/* Social icons */}
+        <div className="py-6 flex justify-center gap-4">
+          {[
+            { label: 'Facebook', path: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
+            { label: 'Twitter', path: 'M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0016.5 3a4.5 4.5 0 00-4.5 4.5v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
+            { label: 'Instagram', path: 'M16 2H8a6 6 0 00-6 6v8a6 6 0 006 6h8a6 6 0 006-6V8a6 6 0 00-6-6zm4 14a4 4 0 01-4 4H8a4 4 0 01-4-4V8a4 4 0 014-4h8a4 4 0 014 4v8zm-8-9a5 5 0 100 10 5 5 0 000-10zm0 8a3 3 0 110-6 3 3 0 010 6zm4.5-9a1 1 0 100 2 1 1 0 000-2z' },
+            { label: 'LinkedIn', path: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 6a2 2 0 100-4 2 2 0 000 4z' },
+            { label: 'YouTube', path: 'M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z' },
+          ].map(({ label, path }) => (
+            <a
+              key={label}
+              href="#"
+              aria-label={label}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-slate-400 hover:border-violet-500 hover:text-violet-400 transition-all hover:scale-110"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d={path} />
+              </svg>
+            </a>
+          ))}
+        </div>
+
+        {/* Copyright */}
+        <p className="pb-6 text-center text-xs text-slate-600">
+          © 2026 <strong className="text-slate-500">HelpDesk Tracker</strong>. All rights reserved.
+        </p>
+      </footer>
+    </div>
+  )
+}

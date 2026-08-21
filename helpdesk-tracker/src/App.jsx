@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './context/AuthContext.jsx'
 
+import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import UserDashboard from './pages/user/Dashboard.jsx'
 import MyTickets from './pages/user/MyTickets.jsx'
@@ -25,6 +26,10 @@ export default function App() {
   return (
     <Routes>
       <Route
+        path="/"
+        element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} replace /> : <Home />}
+      />
+      <Route
         path="/login"
         element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} replace /> : <Login />}
       />
@@ -41,7 +46,7 @@ export default function App() {
       <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsers /></ProtectedRoute>} />
       <Route path="/admin/profile" element={<ProtectedRoute role="admin"><Profile /></ProtectedRoute>} />
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
