@@ -1,9 +1,10 @@
 const express = require('express');
 const { getTickets, createTicket, updateTicket, deleteTicket } = require('../controllers/ticketController');
+const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
-// Middleware to verify JWT could be added here
-// For now, we will just create the basic routes
+// All ticket routes require a valid JWT
+router.use(authMiddleware);
 
 router.get('/', getTickets);
 router.post('/', createTicket);

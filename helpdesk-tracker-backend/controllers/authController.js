@@ -69,7 +69,7 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [users] = await db.query('SELECT * FROM users WHERE email = ? AND deleted_at IS NULL', [email]);
     if (users.length === 0) {
       return res.status(401).json({ message: 'Incorrect login credentials' });
     }
