@@ -40,7 +40,7 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#stats" className="hover:text-white transition-colors">Stats</a>
-            <a href="#about" className="hover:text-white transition-colors">About</a>
+            <a href="#about-us" className="hover:text-white transition-colors">About Us</a>
           </nav>
 
           {/* CTA */}
@@ -73,6 +73,7 @@ export default function Home() {
           <div className="md:hidden border-t border-white/10 bg-[#0d1b2e] px-6 py-4 flex flex-col gap-4">
             <a href="#features" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>Features</a>
             <a href="#stats" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>Stats</a>
+            <a href="#about-us" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>About Us</a>
             <Link to="/login" className="mt-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-center text-sm font-semibold text-white" onClick={() => setMobileOpen(false)}>Get Started →</Link>
           </div>
         )}
@@ -189,7 +190,100 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Ticket Board Preview ────────────────────────────── */}
+      <section className="py-24 px-6">
+        <div className="mx-auto max-w-7xl grid md:grid-cols-2 gap-16 items-center">
+
+          {/* Left — copy */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-4">One board to rule them all</p>
+            <h2 className="text-4xl font-extrabold text-white leading-tight mb-6">
+              Every open ticket, ranked by<br />
+              <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">what breaches first.</span>
+            </h2>
+            <p className="text-slate-400 text-lg leading-relaxed max-w-md">
+              Agents work from one board instead of switching between inbox,
+              spreadsheet, and chat. Priority is always visible — nothing slips through.
+            </p>
+
+            {/* Bullet list */}
+            <ul className="mt-8 space-y-3">
+              {[
+                'SLA breach timers count down in real time',
+                'Priority levels: Urgent, High, Normal, Low',
+                'One-click status updates for faster resolution',
+              ].map(point => (
+                <li key={point} className="flex items-start gap-3 text-sm text-slate-300">
+                  <span className="mt-1 h-4 w-4 shrink-0 rounded-full bg-violet-500/20 flex items-center justify-center">
+                    <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+                  </span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right — mock browser UI */}
+          <div className="relative">
+            {/* Glow */}
+            <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-br from-violet-600/20 to-indigo-600/20 blur-2xl" />
+
+            {/* Browser chrome */}
+            <div className="relative rounded-2xl border border-white/10 bg-[#1a2235] overflow-hidden shadow-2xl">
+
+              {/* Browser title bar */}
+              <div className="flex items-center gap-1.5 px-4 py-3 bg-[#141d2e] border-b border-white/10">
+                <span className="h-3 w-3 rounded-full bg-red-500/70" />
+                <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                <span className="h-3 w-3 rounded-full bg-green-500/70" />
+                <div className="ml-3 flex-1 rounded-md bg-white/5 px-3 py-1 text-xs text-slate-500">helpdesk.tracker/tickets</div>
+              </div>
+
+              <div className="p-5">
+                {/* Priority stat cards */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  {[
+                    { count: 15, label: 'Urgent', bg: 'bg-red-500/10', num: 'text-red-400', tag: 'text-red-400' },
+                    { count: 35, label: 'High',   bg: 'bg-orange-500/10', num: 'text-orange-400', tag: 'text-orange-400' },
+                    { count: 52, label: 'Normal', bg: 'bg-emerald-500/10', num: 'text-emerald-400', tag: 'text-emerald-400' },
+                    { count: 26, label: 'Low',    bg: 'bg-slate-500/10', num: 'text-slate-400', tag: 'text-slate-500' },
+                  ].map(({ count, label, bg, num, tag }) => (
+                    <div key={label} className={`rounded-xl ${bg} border border-white/5 p-4`}>
+                      <p className={`text-2xl font-extrabold ${num}`}>{count}</p>
+                      <p className={`text-xs font-semibold mt-0.5 ${tag}`}>{label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Ticket rows */}
+                <div className="space-y-0 divide-y divide-white/5">
+                  {[
+                    { id: '#4821', subject: 'Payment gateway timing out on checkout', priority: 'URGENT', timer: '00:12:44', timerColor: 'text-red-400', badgeBg: 'bg-red-500/15 text-red-400' },
+                    { id: '#4802', subject: 'Cannot reset password, email not arriving', priority: 'HIGH', timer: '01:57:20', timerColor: 'text-orange-400', badgeBg: 'bg-orange-500/15 text-orange-400' },
+                    { id: '#4831', subject: 'Refund request for duplicate charge', priority: 'NORMAL', timer: '05:30:00', timerColor: 'text-slate-400', badgeBg: 'bg-emerald-500/15 text-emerald-400' },
+                  ].map(({ id, subject, priority, timer, timerColor, badgeBg }) => (
+                    <div key={id} className="py-3">
+                      <div className="flex items-start gap-3">
+                        <span className="text-xs text-slate-500 w-10 shrink-0 pt-0.5">{id}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-slate-200 font-medium truncate">{subject}</p>
+                          <span className={`mt-1.5 inline-block rounded px-2 py-0.5 text-[10px] font-bold tracking-wider ${badgeBg}`}>
+                            {priority}
+                          </span>
+                        </div>
+                      </div>
+                      <p className={`text-right text-xs font-mono mt-1 ${timerColor}`}>{timer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Features ───────────────────────────────────────── */}
+
       <section id="features" className="py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center mb-16">
@@ -213,6 +307,152 @@ export default function Home() {
         </div>
       </section>
 
+
+      {/* ── About Us ───────────────────────────────────────── */}
+      <section id="about-us" className="py-24 px-6 bg-white/[0.02]">
+        <div className="mx-auto max-w-7xl grid md:grid-cols-2 gap-16 items-start">
+
+          {/* Left — text content */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-400 mb-4">About Us</p>
+            <h2 className="text-4xl font-extrabold text-white leading-tight mb-6">
+              A simple, reliable place to manage every support request.
+            </h2>
+
+            <p className="text-slate-400 leading-relaxed mb-5">
+              HelpDesk Tracker is a simple and reliable platform designed to make
+              support requests easier to manage.
+            </p>
+            <p className="text-slate-400 leading-relaxed mb-8">
+              We help organizations track, manage, and resolve support tickets in
+              one central place. From submitting a new issue to monitoring its
+              progress and completing the request, HelpDesk Tracker keeps
+              everything organized and easy to follow.
+            </p>
+
+            {/* Blockquote */}
+            <blockquote className="border-l-4 border-violet-500 pl-5 mb-10">
+              <p className="text-white font-semibold text-lg leading-snug">
+                Our goal is simple: make support faster, clearer, and more efficient.
+              </p>
+            </blockquote>
+
+            {/* Capabilities checklist */}
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-5">
+              With HelpDesk Tracker, teams can
+            </p>
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-4">
+              {[
+                'Submit and manage support requests',
+                'Track ticket status and progress',
+                'Assign issues to the right support staff',
+                'Keep a clear record of previous requests',
+                'Improve communication between users and support teams',
+                'Resolve issues efficiently and on time',
+              ].map(item => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
+                  <span className="mt-0.5 shrink-0 text-violet-400">
+                    <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                    </svg>
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right — ticket path timeline card */}
+          <div>
+            <div className="rounded-2xl border border-white/10 bg-[#1a2235] overflow-hidden shadow-2xl">
+              <div className="px-6 pt-6 pb-2">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-6">
+                  A Ticket's Path Through HelpDesk
+                </p>
+
+                {/* Timeline steps */}
+                <ol className="relative">
+                  {[
+                    {
+                      label: 'Submitted',
+                      desc: 'User logs the issue with the details support needs.',
+                      time: '09:14 AM',
+                      done: true,
+                    },
+                    {
+                      label: 'Assigned',
+                      desc: 'Routed to the right agent based on skill and load.',
+                      time: '09:16 AM',
+                      done: true,
+                    },
+                    {
+                      label: 'In progress',
+                      desc: 'Agent is working the ticket, status visible to the user.',
+                      time: '09:42 AM',
+                      done: false,
+                    },
+                    {
+                      label: 'Resolved',
+                      desc: 'Closed out with a record kept for next time.',
+                      time: null,
+                      done: false,
+                    },
+                  ].map((step, i, arr) => (
+                    <li key={step.label} className="flex gap-4 pb-7 last:pb-0">
+                      {/* Icon + connector line */}
+                      <div className="flex flex-col items-center">
+                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                          step.done
+                            ? 'bg-violet-600 border-violet-600'
+                            : 'bg-transparent border-white/30'
+                        }`}>
+                          {step.done ? (
+                            <svg className="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                            </svg>
+                          ) : null}
+                        </div>
+                        {i < arr.length - 1 && (
+                          <div className={`w-px flex-1 mt-1 ${step.done ? 'bg-violet-600/50' : 'bg-white/10'}`} />
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="pb-1">
+                        <p className={`font-semibold text-base ${step.done ? 'text-white' : 'text-violet-300'}`}>
+                          {step.label}
+                        </p>
+                        <p className="text-sm text-slate-400 mt-0.5 leading-relaxed">{step.desc}</p>
+                        {step.time && (
+                          <p className="text-xs text-slate-500 mt-1">{step.time}</p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* Card footer */}
+              <div className="border-t border-white/10 px-6 py-4 mt-2">
+                <p className="text-xs text-slate-400">
+                  Every stage is logged automatically, so{' '}
+                  <span className="text-violet-400 font-medium">nothing gets lost between handoffs</span>.
+                </p>
+              </div>
+            </div>
+
+            {/* Dark tagline card */}
+            <div className="mt-5 rounded-2xl bg-[#0d1b2e] border border-white/10 px-8 py-6 text-center">
+              <p className="text-white font-bold text-lg leading-snug">
+                HelpDesk Tracker —{' '}
+                <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+                  making support simple, one ticket at a time.
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── CTA Banner ─────────────────────────────────────── */}
       <section id="about" className="relative py-24 px-6 overflow-hidden">

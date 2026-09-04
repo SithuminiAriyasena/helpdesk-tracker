@@ -9,7 +9,8 @@ import CreateTicket from './pages/user/CreateTicket.jsx'
 import Profile from './pages/user/Profile.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import AllTickets from './pages/admin/AllTickets.jsx'
-import AdminUsers from './pages/admin/Users.jsx'
+import AdminUsers from './pages/admin/Users.jsx';
+import GoogleCallback from './pages/GoogleCallback.jsx';
 
 function ProtectedRoute({ role, children }) {
   const { user } = useAuth()
@@ -27,12 +28,13 @@ export default function App() {
     <Routes>
       <Route
         path="/"
-        element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} replace /> : <Home />}
+        element={<Home />}
       />
       <Route
         path="/login"
-        element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} replace /> : <Login />}
+        element={<Login />}
       />
+      <Route path="/google-callback" element={<GoogleCallback />} />
 
       {/* User routes */}
       <Route path="/dashboard" element={<ProtectedRoute role="user"><UserDashboard /></ProtectedRoute>} />

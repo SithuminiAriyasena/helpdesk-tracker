@@ -32,7 +32,7 @@ export default function Sidebar() {
   return (
     <aside className="hidden w-64 shrink-0 flex-col bg-navy-800 text-slate-300 md:flex">
       <NavLink
-        to="/login"
+        to="/"
         className="flex items-center gap-2.5 px-6 py-6 transition-opacity hover:opacity-80 cursor-pointer"
       >
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-500">
