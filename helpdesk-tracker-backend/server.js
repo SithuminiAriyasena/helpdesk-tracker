@@ -11,20 +11,25 @@ const rateLimit = require('express-rate-limit');
 
 const app = express();
 app.use(passport.initialize());
+
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 
 // Rate Limiting for Auth
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 requests per windowMs
+  max: 30, // limit each IP to 30 requests per windowMs
   message: { message: "Too many login attempts from this IP, please try again after 15 minutes" }
 });
 
 // Routes
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth', googleAuthRoutes);
 app.use('/auth', googleAuthRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/tickets', ticketRoutes);
 
 const PORT = process.env.PORT || 5000;

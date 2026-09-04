@@ -26,17 +26,23 @@ exports.createTicket = async (req, res) => {
 
 exports.updateTicket = async (req, res) => {
   const { id } = req.params;
-  const { status, assignedTo } = req.body;
   
   try {
-    const [result] = await db.query(
-      'UPDATE tickets SET status = ?, assignedTo = ? WHERE id = ?',
-      [status, assignedTo, id]
-    );
-
-    if (result.affectedRows === 0) {
+    // First get existing ticket to support partial updates
+    const [existing] = await db.query('SELECT * FROM tickets WHERE id = ?', [id]);
+    if (existing.length === 0) {
       return res.status(404).json({ message: 'Ticket not found' });
     }
+    
+    const ticket = existing[0];
+    const status = req.body.status !== undefined ? req.body.status : ticket.status;
+    const assignedTo = req.body.assignedTo !== undefined ? req.body.assignedTo : ticket.assignedTo;
+    const priority = req.body.priority !== undefined ? req.body.priority : ticket.priority;
+
+    const [result] = await db.query(
+      'UPDATE tickets SET status = ?, assignedTo = ?, priority = ? WHERE id = ?',
+      [status, assignedTo, priority, id]
+    );
 
     res.json({ message: 'Ticket updated successfully' });
   } catch (error) {

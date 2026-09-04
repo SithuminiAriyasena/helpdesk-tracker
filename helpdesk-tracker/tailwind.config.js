@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
@@ -10,12 +11,12 @@ export default {
       },
       colors: {
         ink: {
-          DEFAULT: '#1A2233',
-          light: '#525C72',
+          DEFAULT: 'var(--color-ink)',
+          light: 'var(--color-ink-light)',
         },
-        surface: '#FFFFFF',
-        canvas: '#F5F6F9',
-        line: '#E4E7EE',
+        surface: 'var(--color-surface)',
+        canvas: 'var(--color-canvas)',
+        line: 'var(--color-line)',
         brand: {
           50: '#EEF0FD',
           100: '#DDE1FB',
@@ -32,15 +33,15 @@ export default {
         },
         status: {
           open: '#F59E0B',
-          openBg: '#FEF3E2',
+          openBg: 'var(--color-status-openBg)',
           progress: '#3B82F6',
-          progressBg: '#E9F1FE',
+          progressBg: 'var(--color-status-progressBg)',
           resolved: '#10B981',
-          resolvedBg: '#E6F8F1',
+          resolvedBg: 'var(--color-status-resolvedBg)',
         },
       },
       boxShadow: {
-        card: '0 1px 2px rgba(13,17,32,0.04), 0 1px 12px rgba(13,17,32,0.05)',
+        card: 'var(--shadow-card)',
       },
       borderRadius: {
         xl2: '1rem',

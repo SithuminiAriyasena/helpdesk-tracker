@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
-import { LifeBuoy, Zap, Shield, BarChart3, Clock, CheckCircle, ArrowRight, Menu, X } from 'lucide-react'
+import { LifeBuoy, Zap, Shield, BarChart3, Clock, CheckCircle, ArrowRight, Menu, X, Sun, Moon } from 'lucide-react'
 import { useState } from 'react'
+import { useTickets } from '../context/TicketContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 
 const FEATURES = [
   { icon: Zap, title: 'Fast Resolution', desc: 'AI-powered ticket routing gets issues to the right team instantly.' },
@@ -18,12 +20,33 @@ const STATS = [
 
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { dark, toggle } = useTheme()
+  
+  // Real data from backend
+  const { tickets } = useTickets()
+  
+  const openTickets = tickets.filter(t => t.status === 'Open')
+  
+  // Map priorities (admin uses High, Medium, Low)
+  const urgentCount = tickets.filter(t => t.priority === 'Urgent').length
+  const highCount = tickets.filter(t => t.priority === 'High').length
+  const normalCount = tickets.filter(t => t.priority === 'Medium' || t.priority === 'Normal').length
+  const lowCount = tickets.filter(t => t.priority === 'Low').length
+
+  // Theme-aware classes
+  const bg = dark ? 'bg-[#0d1b2e]' : 'bg-slate-50'
+  const headerBg = dark ? 'bg-[#0d1b2e]/80' : 'bg-white/80'
+  const border = dark ? 'border-white/10' : 'border-slate-200'
+  const textPrimary = dark ? 'text-white' : 'text-slate-900'
+  const textMuted = dark ? 'text-slate-400' : 'text-slate-500'
+  const navLink = dark ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+  const mobileMbg = dark ? 'bg-[#0d1b2e]' : 'bg-white'
 
   return (
-    <div className="min-h-screen bg-[#0d1b2e] text-white overflow-x-hidden">
+    <div className={`min-h-screen ${bg} ${textPrimary} overflow-x-hidden transition-colors duration-300`}>
 
       {/* ── Navbar ─────────────────────────────────────────── */}
-      <header className="fixed inset-x-0 top-0 z-50 backdrop-blur-md bg-[#0d1b2e]/80 border-b border-white/10">
+      <header className={`fixed inset-x-0 top-0 z-50 backdrop-blur-md ${headerBg} border-b ${border} transition-colors duration-300`}>
         <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
@@ -31,23 +54,32 @@ export default function Home() {
               <LifeBuoy size={18} className="text-white" />
             </div>
             <div>
-              <p className="text-[15px] font-bold leading-tight text-white">HelpDesk</p>
+              <p className={`text-[15px] font-bold leading-tight ${textPrimary}`}>HelpDesk</p>
               <p className="text-[10px] font-semibold uppercase tracking-widest text-violet-400">Tracker</p>
             </div>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#stats" className="hover:text-white transition-colors">Stats</a>
-            <a href="#about-us" className="hover:text-white transition-colors">About Us</a>
+          <nav className={`hidden md:flex items-center gap-8 text-sm font-medium ${navLink}`}>
+            <a href="#features" className="hover:text-violet-500 transition-colors">Features</a>
+            <a href="#stats" className="hover:text-violet-500 transition-colors">Stats</a>
+            <a href="#about-us" className="hover:text-violet-500 transition-colors">About Us</a>
           </nav>
 
-          {/* CTA */}
+          {/* CTA + Toggle */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme toggle */}
+            <button
+              onClick={toggle}
+              title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className={`flex h-9 w-9 items-center justify-center rounded-full border transition-all hover:scale-105 hover:border-violet-500 hover:text-violet-400 ${dark ? 'border-white/20 bg-white/5 text-slate-300' : 'border-slate-200 bg-slate-100 text-slate-600'}`}
+            >
+              {dark ? <Sun size={16} strokeWidth={2} /> : <Moon size={16} strokeWidth={2} />}
+            </button>
+
             <Link
               to="/login"
-              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              className={`text-sm font-medium transition-colors ${navLink}`}
             >
               Sign In
             </Link>
@@ -60,17 +92,25 @@ export default function Home() {
           </div>
 
           {/* Mobile hamburger */}
-          <button
-            className="md:hidden text-slate-300 hover:text-white"
-            onClick={() => setMobileOpen(o => !o)}
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              onClick={toggle}
+              className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${dark ? 'border-white/20 text-slate-300' : 'border-slate-200 text-slate-600'}`}
+            >
+              {dark ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+            <button
+              className={`${navLink}`}
+              onClick={() => setMobileOpen(o => !o)}
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-white/10 bg-[#0d1b2e] px-6 py-4 flex flex-col gap-4">
+          <div className={`md:hidden border-t ${border} ${mobileMbg} px-6 py-4 flex flex-col gap-4`}>
             <a href="#features" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>Features</a>
             <a href="#stats" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>Stats</a>
             <a href="#about-us" className="text-sm text-slate-300 hover:text-white" onClick={() => setMobileOpen(false)}>About Us</a>
@@ -94,7 +134,7 @@ export default function Home() {
               Help desk automation
             </span>
 
-            <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.08] tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] sm:leading-[1.08] tracking-tight mb-6">
               Automate your{' '}
               <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
                 help desk.
@@ -103,7 +143,7 @@ export default function Home() {
               Elevate support<br />experiences.
             </h1>
 
-            <p className="text-slate-400 text-lg leading-relaxed max-w-md mb-10">
+            <p className={`${textMuted} text-lg leading-relaxed max-w-md mb-10`}>
               Put your help desk on auto-pilot. Cut down manual effort and boost productivity
               with smart routing, real-time analytics, and AI-powered automation.
             </p>
@@ -117,20 +157,20 @@ export default function Home() {
               </Link>
               <a
                 href="#features"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-7 py-3.5 text-base font-semibold text-white hover:bg-white/10 transition-all"
+                className={`inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-base font-semibold transition-all ${dark ? 'border-white/20 bg-white/5 text-white hover:bg-white/10' : 'border-slate-300 bg-slate-100 text-slate-800 hover:bg-slate-200'}`}
               >
                 See Features
               </a>
             </div>
 
             {/* Social proof */}
-            <div className="mt-10 flex items-center gap-3 text-sm text-slate-400">
+            <div className={`mt-10 flex items-center gap-3 text-sm ${textMuted}`}>
               <div className="flex -space-x-2">
                 {['V', 'A', 'M', 'K'].map((l, i) => (
-                  <div key={i} className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-[#0d1b2e] ${['bg-violet-500','bg-indigo-500','bg-pink-500','bg-cyan-500'][i]}`}>{l}</div>
+                  <div key={i} className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 ${dark ? 'border-[#0d1b2e]' : 'border-slate-50'} ${['bg-violet-500','bg-indigo-500','bg-pink-500','bg-cyan-500'][i]}`}>{l}</div>
                 ))}
               </div>
-              <span><strong className="text-white">500+</strong> teams already on board</span>
+              <span><strong className={textPrimary}>500+</strong> teams already on board</span>
             </div>
           </div>
 
@@ -139,13 +179,13 @@ export default function Home() {
             {/* Glow behind card */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-600/30 to-indigo-600/30 blur-2xl scale-110 pointer-events-none" />
 
-            <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
+            <div className={`relative rounded-3xl border backdrop-blur-xl p-8 shadow-2xl ${dark ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-white'}`}>
               <div className="mb-6 text-center">
                 <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 mb-4 shadow-lg">
                   <LifeBuoy size={22} className="text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-white">Welcome to HelpDesk Tracker</h2>
-                <p className="text-sm text-slate-400 mt-1">Sign in to manage your tickets</p>
+                <h2 className={`text-xl font-bold ${textPrimary}`}>Welcome to HelpDesk Tracker</h2>
+                <p className={`text-sm ${textMuted} mt-1`}>Sign in to manage your tickets</p>
               </div>
 
               {/* Quick feature checklist */}
@@ -156,7 +196,7 @@ export default function Home() {
                   'Role-based access (Admin / User)',
                   'Priority & category management',
                 ].map(item => (
-                  <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
+                  <li key={item} className={`flex items-center gap-3 text-sm ${dark ? 'text-slate-300' : 'text-slate-600'}`}>
                     <CheckCircle size={16} className="shrink-0 text-violet-400" />
                     {item}
                   </li>
@@ -170,7 +210,7 @@ export default function Home() {
                 Sign In to Your Account
               </Link>
 
-              <p className="mt-4 text-center text-xs text-slate-500">
+              <p className={`mt-4 text-center text-xs ${textMuted}`}>
                 No account? Contact your administrator.
               </p>
             </div>
@@ -179,12 +219,12 @@ export default function Home() {
       </section>
 
       {/* ── Stats ──────────────────────────────────────────── */}
-      <section id="stats" className="border-y border-white/10 bg-white/[0.02] py-14">
+      <section id="stats" className={`border-y py-14 ${dark ? 'border-white/10 bg-white/[0.02]' : 'border-slate-200 bg-slate-100/50'}`}>
         <div className="mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {STATS.map(({ value, label }) => (
             <div key={label}>
               <p className="text-4xl font-extrabold bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">{value}</p>
-              <p className="mt-1 text-sm text-slate-400">{label}</p>
+              <p className={`mt-1 text-sm ${textMuted}`}>{label}</p>
             </div>
           ))}
         </div>
@@ -229,52 +269,108 @@ export default function Home() {
             <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-br from-violet-600/20 to-indigo-600/20 blur-2xl" />
 
             {/* Browser chrome */}
-            <div className="relative rounded-2xl border border-white/10 bg-[#1a2235] overflow-hidden shadow-2xl">
+            <div className={`relative rounded-2xl border overflow-hidden shadow-2xl ${dark ? 'border-white/10 bg-[#1a2235]' : 'border-slate-200 bg-white'}`}>
 
               {/* Browser title bar */}
-              <div className="flex items-center gap-1.5 px-4 py-3 bg-[#141d2e] border-b border-white/10">
+              <div className={`flex items-center gap-1.5 px-4 py-3 border-b ${dark ? 'bg-[#141d2e] border-white/10' : 'bg-slate-100 border-slate-200'}`}>
                 <span className="h-3 w-3 rounded-full bg-red-500/70" />
                 <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
                 <span className="h-3 w-3 rounded-full bg-green-500/70" />
-                <div className="ml-3 flex-1 rounded-md bg-white/5 px-3 py-1 text-xs text-slate-500">helpdesk.tracker/tickets</div>
+                <div className={`ml-3 flex-1 rounded-md px-3 py-1 text-xs ${dark ? 'bg-white/5 text-slate-500' : 'bg-slate-200 text-slate-400'}`}>helpdesk.tracker/tickets</div>
               </div>
 
               <div className="p-5">
-                {/* Priority stat cards */}
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  {[
-                    { count: 15, label: 'Urgent', bg: 'bg-red-500/10', num: 'text-red-400', tag: 'text-red-400' },
-                    { count: 35, label: 'High',   bg: 'bg-orange-500/10', num: 'text-orange-400', tag: 'text-orange-400' },
-                    { count: 52, label: 'Normal', bg: 'bg-emerald-500/10', num: 'text-emerald-400', tag: 'text-emerald-400' },
-                    { count: 26, label: 'Low',    bg: 'bg-slate-500/10', num: 'text-slate-400', tag: 'text-slate-500' },
-                  ].map(({ count, label, bg, num, tag }) => (
-                    <div key={label} className={`rounded-xl ${bg} border border-white/5 p-4`}>
-                      <p className={`text-2xl font-extrabold ${num}`}>{count}</p>
-                      <p className={`text-xs font-semibold mt-0.5 ${tag}`}>{label}</p>
-                    </div>
-                  ))}
-                </div>
+                {/* Priority Breakdown Widget */}
+                <div className={`mb-6 rounded-xl border p-5 ${dark ? 'border-[#1E2740] bg-[#131829]' : 'border-slate-200 bg-slate-50'}`}>
+                  <div className="mb-4">
+                    <h3 className="text-[11px] font-bold text-indigo-400">PRIORITY BREAKDOWN</h3>
+                    <p className={`text-xs mt-0.5 ${textMuted}`}>Share of open tickets by SLA priority</p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-center gap-8">
+                    {/* Donut Chart */}
+                    <div className="relative h-32 w-32 shrink-0">
+                      <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90 transform">
+                        {(() => {
+                          const priorities = [
+                            { name: 'Urgent', count: urgentCount, color: '#F0576B' },
+                            { name: 'High', count: highCount, color: '#F59E42' },
+                            { name: 'Normal', count: normalCount, color: '#34D399' },
+                            { name: 'Low', count: lowCount, color: '#64748B' },
+                          ]
+                          const total = priorities.reduce((sum, p) => sum + p.count, 0)
+                          
+                          if (total === 0) {
+                            return (
+                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1E2740" strokeWidth="12" />
+                            )
+                          }
 
-                {/* Ticket rows */}
-                <div className="space-y-0 divide-y divide-white/5">
-                  {[
-                    { id: '#4821', subject: 'Payment gateway timing out on checkout', priority: 'URGENT', timer: '00:12:44', timerColor: 'text-red-400', badgeBg: 'bg-red-500/15 text-red-400' },
-                    { id: '#4802', subject: 'Cannot reset password, email not arriving', priority: 'HIGH', timer: '01:57:20', timerColor: 'text-orange-400', badgeBg: 'bg-orange-500/15 text-orange-400' },
-                    { id: '#4831', subject: 'Refund request for duplicate charge', priority: 'NORMAL', timer: '05:30:00', timerColor: 'text-slate-400', badgeBg: 'bg-emerald-500/15 text-emerald-400' },
-                  ].map(({ id, subject, priority, timer, timerColor, badgeBg }) => (
-                    <div key={id} className="py-3">
-                      <div className="flex items-start gap-3">
-                        <span className="text-xs text-slate-500 w-10 shrink-0 pt-0.5">{id}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-slate-200 font-medium truncate">{subject}</p>
-                          <span className={`mt-1.5 inline-block rounded px-2 py-0.5 text-[10px] font-bold tracking-wider ${badgeBg}`}>
-                            {priority}
-                          </span>
-                        </div>
+                          let currentOffset = 0;
+                          return priorities.map((p) => {
+                            if (p.count === 0) return null;
+                            const percentage = p.count / total;
+                            const strokeDasharray = `${percentage * 251.2} 251.2`; // 2 * pi * r (r=40)
+                            const strokeDashoffset = -currentOffset * 251.2;
+                            currentOffset += percentage;
+                            
+                            return (
+                              <circle
+                                key={p.name}
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                fill="transparent"
+                                stroke={p.color}
+                                strokeWidth="12"
+                                strokeDasharray={strokeDasharray}
+                                strokeDashoffset={strokeDashoffset}
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            )
+                          })
+                        })()}
+                      </svg>
+                      {/* Center Total */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className={`font-mono text-2xl font-bold ${textPrimary}`}>
+                          {urgentCount + highCount + normalCount + lowCount}
+                        </span>
+                        <span className="text-[9px] font-medium uppercase tracking-wider text-slate-500">
+                          open tickets
+                        </span>
                       </div>
-                      <p className={`text-right text-xs font-mono mt-1 ${timerColor}`}>{timer}</p>
                     </div>
-                  ))}
+
+                    {/* Legend */}
+                    <div className="flex-1 w-full space-y-0">
+                      {[
+                        { name: 'Urgent', count: urgentCount, color: 'bg-[#F0576B]', textCol: 'text-[#F0576B]' },
+                        { name: 'High', count: highCount, color: 'bg-[#F59E42]', textCol: 'text-[#F59E42]' },
+                        { name: 'Normal', count: normalCount, color: 'bg-[#34D399]', textCol: 'text-[#34D399]' },
+                        { name: 'Low', count: lowCount, color: 'bg-[#64748B]', textCol: 'text-[#64748B]' },
+                      ].map((p, idx, arr) => {
+                        const total = urgentCount + highCount + normalCount + lowCount
+                        const pct = total === 0 ? 0 : Math.round((p.count / total) * 100)
+                        return (
+                          <div key={p.name} className={`flex items-center justify-between py-2.5 ${idx !== arr.length - 1 ? `border-b ${dark ? 'border-[#1E2740]/50' : 'border-slate-200'}` : ''}`}>
+                            <div className="flex items-center gap-3">
+                              <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${p.color}`} />
+                              <div>
+                                <p className={`text-sm font-bold ${textPrimary}`}>{p.name}</p>
+                                <p className={`text-[10px] font-medium ${textMuted}`}>
+                                  {p.count} ticket{p.count !== 1 ? 's' : ''}
+                                </p>
+                              </div>
+                            </div>
+                            <span className={`font-mono text-sm font-bold ${p.count > 0 ? p.textCol : 'text-[#64748B] opacity-50'}`}>
+                              {pct}%
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -309,21 +405,21 @@ export default function Home() {
 
 
       {/* ── About Us ───────────────────────────────────────── */}
-      <section id="about-us" className="py-24 px-6 bg-white/[0.02]">
+      <section id="about-us" className={`py-24 px-6 ${dark ? 'bg-white/[0.02]' : 'bg-slate-100/60'}`}>
         <div className="mx-auto max-w-7xl grid md:grid-cols-2 gap-16 items-start">
 
           {/* Left — text content */}
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-400 mb-4">About Us</p>
-            <h2 className="text-4xl font-extrabold text-white leading-tight mb-6">
+            <h2 className={`text-4xl font-extrabold ${textPrimary} leading-tight mb-6`}>
               A simple, reliable place to manage every support request.
             </h2>
 
-            <p className="text-slate-400 leading-relaxed mb-5">
+            <p className={`${textMuted} leading-relaxed mb-5`}>
               HelpDesk Tracker is a simple and reliable platform designed to make
               support requests easier to manage.
             </p>
-            <p className="text-slate-400 leading-relaxed mb-8">
+            <p className={`${textMuted} leading-relaxed mb-8`}>
               We help organizations track, manage, and resolve support tickets in
               one central place. From submitting a new issue to monitoring its
               progress and completing the request, HelpDesk Tracker keeps
@@ -332,7 +428,7 @@ export default function Home() {
 
             {/* Blockquote */}
             <blockquote className="border-l-4 border-violet-500 pl-5 mb-10">
-              <p className="text-white font-semibold text-lg leading-snug">
+              <p className={`font-semibold text-lg leading-snug ${textPrimary}`}>
                 Our goal is simple: make support faster, clearer, and more efficient.
               </p>
             </blockquote>
@@ -341,7 +437,7 @@ export default function Home() {
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-5">
               With HelpDesk Tracker, teams can
             </p>
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-4">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
               {[
                 'Submit and manage support requests',
                 'Track ticket status and progress',
@@ -350,7 +446,7 @@ export default function Home() {
                 'Improve communication between users and support teams',
                 'Resolve issues efficiently and on time',
               ].map(item => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-300">
+                <li key={item} className={`flex items-start gap-2.5 text-sm ${textMuted}`}>
                   <span className="mt-0.5 shrink-0 text-violet-400">
                     <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
@@ -364,7 +460,7 @@ export default function Home() {
 
           {/* Right — ticket path timeline card */}
           <div>
-            <div className="rounded-2xl border border-white/10 bg-[#1a2235] overflow-hidden shadow-2xl">
+            <div className={`rounded-2xl border overflow-hidden shadow-2xl ${dark ? 'border-white/10 bg-[#1a2235]' : 'border-slate-200 bg-white'}`}>
               <div className="px-6 pt-6 pb-2">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-6">
                   A Ticket's Path Through HelpDesk
@@ -404,7 +500,7 @@ export default function Home() {
                         <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
                           step.done
                             ? 'bg-violet-600 border-violet-600'
-                            : 'bg-transparent border-white/30'
+                            : dark ? 'bg-transparent border-white/30' : 'bg-transparent border-slate-300'
                         }`}>
                           {step.done ? (
                             <svg className="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
@@ -413,16 +509,16 @@ export default function Home() {
                           ) : null}
                         </div>
                         {i < arr.length - 1 && (
-                          <div className={`w-px flex-1 mt-1 ${step.done ? 'bg-violet-600/50' : 'bg-white/10'}`} />
+                          <div className={`w-px flex-1 mt-1 ${step.done ? 'bg-violet-600/50' : dark ? 'bg-white/10' : 'bg-slate-200'}`} />
                         )}
                       </div>
 
                       {/* Content */}
                       <div className="pb-1">
-                        <p className={`font-semibold text-base ${step.done ? 'text-white' : 'text-violet-300'}`}>
+                        <p className={`font-semibold text-base ${step.done ? textPrimary : 'text-violet-500'}`}>
                           {step.label}
                         </p>
-                        <p className="text-sm text-slate-400 mt-0.5 leading-relaxed">{step.desc}</p>
+                        <p className={`text-sm ${textMuted} mt-0.5 leading-relaxed`}>{step.desc}</p>
                         {step.time && (
                           <p className="text-xs text-slate-500 mt-1">{step.time}</p>
                         )}
@@ -433,17 +529,17 @@ export default function Home() {
               </div>
 
               {/* Card footer */}
-              <div className="border-t border-white/10 px-6 py-4 mt-2">
-                <p className="text-xs text-slate-400">
+              <div className={`border-t px-6 py-4 mt-2 ${dark ? 'border-white/10' : 'border-slate-100'}`}>
+                <p className={`text-xs ${textMuted}`}>
                   Every stage is logged automatically, so{' '}
                   <span className="text-violet-400 font-medium">nothing gets lost between handoffs</span>.
                 </p>
               </div>
             </div>
 
-            {/* Dark tagline card */}
-            <div className="mt-5 rounded-2xl bg-[#0d1b2e] border border-white/10 px-8 py-6 text-center">
-              <p className="text-white font-bold text-lg leading-snug">
+            {/* Tagline card */}
+            <div className={`mt-5 rounded-2xl border px-8 py-6 text-center ${dark ? 'bg-[#0d1b2e] border-white/10' : 'bg-slate-100 border-slate-200'}`}>
+              <p className={`font-bold text-lg leading-snug ${textPrimary}`}>
                 HelpDesk Tracker —{' '}
                 <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
                   making support simple, one ticket at a time.
@@ -456,15 +552,15 @@ export default function Home() {
 
       {/* ── CTA Banner ─────────────────────────────────────── */}
       <section id="about" className="relative py-24 px-6 overflow-hidden">
-        {/* deep navy gradient bg */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0d1b2e] via-[#0a1628] to-[#060e1c]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#3730a3_0%,_transparent_70%)] opacity-30" />
+        {/* bg */}
+        <div className={`absolute inset-0 ${dark ? 'bg-gradient-to-b from-[#0d1b2e] via-[#0a1628] to-[#060e1c]' : 'bg-gradient-to-b from-slate-100 via-slate-50 to-white'}`} />
+        {dark && <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#3730a3_0%,_transparent_70%)] opacity-30" />}
 
         <div className="relative mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-snug mb-8">
+          <h2 className={`text-3xl md:text-4xl font-extrabold ${textPrimary} leading-snug mb-8`}>
             Want to explore how you can put your help desk
             operations on auto-pilot with HelpDesk Tracker?
-            <span className="text-yellow-400"> Talk to our experts today!</span>
+            <span className="text-yellow-500"> Talk to our experts today!</span>
           </h2>
           <Link
             to="/login"
@@ -476,7 +572,7 @@ export default function Home() {
       </section>
 
       {/* ── Quick Links Bar ────────────────────────────────── */}
-      <div className="bg-[#060e1c] border-y border-white/10">
+      <div className={`border-y ${dark ? 'bg-[#060e1c] border-white/10' : 'bg-slate-100 border-slate-200'}`}>
         <div className="mx-auto max-w-3xl flex items-center justify-center gap-10 py-5">
           {[
             { icon: BarChart3, label: 'Live Demo' },
@@ -486,9 +582,9 @@ export default function Home() {
             <Link
               key={label}
               to="/login"
-              className="flex flex-col items-center gap-1.5 text-slate-400 hover:text-white transition-colors group"
+              className={`flex flex-col items-center gap-1.5 transition-colors group ${dark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 group-hover:border-violet-500/50 transition-colors">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-full border transition-colors group-hover:border-violet-500/50 ${dark ? 'border-white/10' : 'border-slate-300'}`}>
                 <Icon size={16} />
               </div>
               <span className="text-xs font-medium">{label}</span>
@@ -498,12 +594,12 @@ export default function Home() {
       </div>
 
       {/* ── Footer ─────────────────────────────────────────── */}
-      <footer className="bg-[#111827]">
+      <footer className={dark ? 'bg-[#111827]' : 'bg-slate-200'}>
 
         {/* Hotline bar */}
-        <div className="border-b border-white/10 py-3 text-center text-sm text-slate-300">
+        <div className={`border-b py-3 text-center text-sm ${dark ? 'border-white/10 text-slate-300' : 'border-slate-300 text-slate-600'}`}>
           <span className="inline-flex items-center gap-2">
-            <svg className="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.897 1.368l.758 2.275a2 2 0 01-.45 2.07L8.34 9.858a16.016 16.016 0 006.802 6.802l1.145-1.145a2 2 0 012.07-.45l2.275.758A2 2 0 0121 17.72V20a2 2 0 01-2 2h-1C9.716 22 2 14.284 2 5V4a2 2 0 012-2h-.001z"/>
             </svg>
             To reach support, call&nbsp;

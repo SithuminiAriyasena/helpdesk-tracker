@@ -18,14 +18,24 @@ export default function CreateTicket() {
     description: '',
   })
   const [submitted, setSubmitted] = useState(false)
+  const [cancelled, setCancelled] = useState(false)
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    createTicket({ ...form, requester: user.name })
+    createTicket({ ...form, requester: user?.name })
     setSubmitted(true)
     setTimeout(() => navigate('/my-tickets'), 1100)
+  }
+
+  const handleCancel = () => {
+    setCancelled(true)
+    if (window.history.length > 2) {
+      navigate(-1)
+    } else {
+      navigate('/dashboard')
+    }
   }
 
   return (
@@ -37,7 +47,7 @@ export default function CreateTicket() {
             <p className="mt-3 font-display text-lg font-bold text-ink">Ticket submitted</p>
             <p className="mt-1 text-sm text-ink-light">Redirecting to My Tickets…</p>
           </div>
-        ) : (
+        ) : cancelled ? null : (
           <form onSubmit={handleSubmit} className="space-y-5 rounded-xl2 bg-surface p-6 shadow-card">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-ink">Subject</label>
@@ -46,17 +56,17 @@ export default function CreateTicket() {
                 value={form.subject}
                 onChange={update('subject')}
                 placeholder="Briefly describe the issue"
-                className="w-full rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500"
+                className="w-full rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500 bg-surface"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-ink">Category</label>
                 <select
                   value={form.category}
                   onChange={update('category')}
-                  className="w-full rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500"
+                  className="w-full rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500 bg-surface"
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c}>{c}</option>
@@ -68,7 +78,7 @@ export default function CreateTicket() {
                 <select
                   value={form.priority}
                   onChange={update('priority')}
-                  className="w-full rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500"
+                  className="w-full rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500 bg-surface"
                 >
                   {PRIORITIES.map((p) => (
                     <option key={p}>{p}</option>
@@ -85,16 +95,25 @@ export default function CreateTicket() {
                 value={form.description}
                 onChange={update('description')}
                 placeholder="Steps to reproduce, error messages, when it started…"
-                className="w-full resize-none rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500"
+                className="w-full resize-none rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink outline-none focus:border-brand-500 bg-surface"
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600"
-            >
-              Submit Ticket
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex-1 rounded-lg border border-line bg-surface py-2.5 text-sm font-semibold text-ink-light transition-colors hover:bg-canvas hover:text-ink"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 rounded-lg bg-brand-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-600"
+              >
+                Submit Ticket
+              </button>
+            </div>
           </form>
         )}
       </div>

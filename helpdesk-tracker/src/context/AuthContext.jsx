@@ -61,6 +61,13 @@ export function AuthProvider({ children }) {
     localStorage.setItem('helpdesk_user', JSON.stringify(mockUser));
   }
 
+  const setSession = (userData, token) => {
+    setError('')
+    setUser(userData)
+    if (token) localStorage.setItem('helpdesk_token', token)
+    if (userData) localStorage.setItem('helpdesk_user', JSON.stringify(userData))
+  }
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('helpdesk_token');
@@ -68,7 +75,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, quickLogin, error }}>
+    <AuthContext.Provider value={{ user, login, logout, quickLogin, setSession, error }}>
       {children}
     </AuthContext.Provider>
   )

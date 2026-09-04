@@ -6,7 +6,7 @@ import TicketTable from '../../components/TicketTable.jsx'
 import { useTickets } from '../../context/TicketContext.jsx'
 
 export default function AdminDashboard() {
-  const { tickets } = useTickets()
+  const { tickets, updateStatus, updatePriority, deleteTicket } = useTickets()
 
   const counts = {
     total: tickets.length,
@@ -18,7 +18,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout title="Admin Dashboard" subtitle="Organization-wide ticket overview">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard label="Total Tickets" value={counts.total} icon={Ticket} accent="slate" />
         <StatCard label="Open" value={counts.open} icon={CircleDot} accent="amber" />
         <StatCard label="In Progress" value={counts.progress} icon={Clock} accent="blue" />
@@ -32,7 +32,13 @@ export default function AdminDashboard() {
             View all
           </Link>
         </div>
-        <TicketTable tickets={recent} showRequester />
+        <TicketTable
+          tickets={recent}
+          showRequester
+          onStatusChange={updateStatus}
+          onPriorityChange={updatePriority}
+          onDeleteTicket={deleteTicket}
+        />
       </div>
     </Layout>
   )

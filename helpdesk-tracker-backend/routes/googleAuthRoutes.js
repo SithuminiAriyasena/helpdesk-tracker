@@ -5,16 +5,34 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// Initiate Google OAuth login
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+// Initiate Google OAuth login -> GET /api/auth/google
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google OAuth callback
-router.get('/auth/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/login' }), (req, res) => {
-  // Successful authentication, issue JWT
-  const token = jwt.sign({ id: req.user.id, role: req.user.role }, process.env.JWT_SECRET || 'your_jwt_secret_key_here', { expiresIn: '1d' });
-  // Redirect to frontend with token as query param
-  const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/google-callback?token=${token}`;
-  res.redirect(redirectUrl);
-});
+// Google OAuth callback -> GET /api/auth/google/callback
+router.get(
+  '/google/callback',
+  (req, res, next) => {
+    passport.authenticate('google', { session: false }, (err, user, info) => {
+      if (err || !user) {
+        console.error('Google OAuth authentication failed:', err || info);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        return res.redirect(`${frontendUrl}/login?error=google_failed`);
+      }
+      // Successful authentication, issue complete JWT
+      const token = jwt.sign(
+        {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        process.env.JWT_SECRET || 'your_jwt_secret_key_here',
+        { expiresIn: '1d' }
+      );
+      const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/google-callback?token=${token}`;
+      res.redirect(redirectUrl);
+    })(req, res, next);
+  }
+);
 
 module.exports = router;

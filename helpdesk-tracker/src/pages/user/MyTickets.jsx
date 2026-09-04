@@ -37,7 +37,9 @@ export default function MyTickets() {
               key={s}
               onClick={() => setStatus(s)}
               className={`whitespace-nowrap rounded-lg px-3.5 py-2 text-xs font-semibold transition-colors ${
-                status === s ? 'bg-navy-800 text-white' : 'bg-surface text-ink-light hover:text-ink'
+                status === s
+                  ? 'bg-brand-500 text-white shadow-sm'
+                  : 'border border-line bg-surface text-ink-light hover:bg-canvas hover:text-ink'
               }`}
             >
               {s}

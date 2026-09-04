@@ -31,7 +31,7 @@ export default function UserDashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard label="Total Tickets" value={counts.total} icon={Ticket} accent="slate" />
         <StatCard label="Open" value={counts.open} icon={CircleDot} accent="amber" />
         <StatCard label="In Progress" value={counts.progress} icon={Clock} accent="blue" />

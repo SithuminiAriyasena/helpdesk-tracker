@@ -26,11 +26,24 @@ async function setupDatabase() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
-        password VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NULL,
+        google_id VARCHAR(255) NULL,
         role ENUM('user', 'admin') DEFAULT 'user',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Ensure google_id column exists if table was created previously
+    try {
+      await connection.query('ALTER TABLE users ADD COLUMN google_id VARCHAR(255) NULL');
+    } catch (e) {
+      // Column may already exist
+    }
+    try {
+      await connection.query('ALTER TABLE users MODIFY COLUMN password VARCHAR(255) NULL');
+    } catch (e) {
+      // Password may already be nullable
+    }
 
     // 3. Create tickets table
     console.log('Creating tickets table...');

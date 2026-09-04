@@ -10,9 +10,9 @@ export default function Profile() {
 
   return (
     <Layout title="Profile" subtitle="Your account details">
-      <div className="mx-auto max-w-xl rounded-xl2 bg-surface p-6 shadow-card">
+      <div className="mx-auto max-w-xl rounded-xl2 bg-surface p-6 shadow-card border border-line">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 font-display text-xl font-bold text-brand-600">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-500/10 font-display text-xl font-bold text-brand-500">
             {initials(user.name)}
           </div>
           <div>

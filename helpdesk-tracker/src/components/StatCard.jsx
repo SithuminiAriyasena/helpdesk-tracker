@@ -8,7 +8,7 @@ const ACCENTS = {
 export default function StatCard({ label, value, icon: Icon, accent = 'slate' }) {
   const a = ACCENTS[accent]
   return (
-    <div className="relative overflow-hidden rounded-xl2 bg-surface p-5 shadow-card">
+    <div className="relative overflow-hidden rounded-xl2 bg-surface p-5 shadow-card transition-colors">
       <span className={`absolute inset-y-0 left-0 w-1 ${a.bar}`} />
       <div className="flex items-start justify-between">
         <div>
