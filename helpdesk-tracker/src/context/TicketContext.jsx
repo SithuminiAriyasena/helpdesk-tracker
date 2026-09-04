@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { USERS } from '../data/mockData.js'
+import { apiFetch } from '../api.js'
 
 const TicketContext = createContext(null)
-
-const API_URL = 'http://localhost:5000/api/tickets'
 
 // Mapper to transform MySQL ticket format to frontend format
 const mapTicketToFrontend = (t) => ({
@@ -17,28 +15,32 @@ const mapTicketToFrontend = (t) => ({
   dbId: t.id // Keep the numeric ID for API calls
 })
 
+// Mapper to transform MySQL user format to frontend format
+const mapUserToFrontend = (u) => ({
+  id: u.id,
+  name: u.name,
+  email: u.email,
+  role: u.role,
+  createdAt: u.created_at,
+  deletedAt: u.deleted_at
+    ? new Date(u.deleted_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : null,
+})
+
 export function TicketProvider({ children }) {
   const [tickets, setTickets] = useState([])
-  const [users, setUsers] = useState(() => {
-    const saved = localStorage.getItem('helpdesk_users')
-    return saved ? JSON.parse(saved) : USERS
-  })
-  const [trashUsers, setTrashUsers] = useState(() => {
-    const saved = localStorage.getItem('helpdesk_trash_users')
-    return saved ? JSON.parse(saved) : []
-  })
-
-  useEffect(() => {
-    localStorage.setItem('helpdesk_users', JSON.stringify(users))
-  }, [users])
-
-  useEffect(() => {
-    localStorage.setItem('helpdesk_trash_users', JSON.stringify(trashUsers))
-  }, [trashUsers])
+  const [users, setUsers] = useState([])
+  const [trashUsers, setTrashUsers] = useState([])
 
   const fetchTickets = async () => {
     try {
-      const res = await fetch(API_URL)
+      const res = await apiFetch('/api/tickets')
       if (res.ok) {
         const data = await res.json()
         setTickets(data.map(mapTicketToFrontend))
@@ -48,25 +50,45 @@ export function TicketProvider({ children }) {
     }
   }
 
+  const fetchUsers = async () => {
+    try {
+      const [resUsers, resTrash] = await Promise.all([
+        apiFetch('/api/users'),
+        apiFetch('/api/users/trash')
+      ])
+
+      if (resUsers.ok) {
+        const usersData = await resUsers.json()
+        setUsers(usersData.map(mapUserToFrontend))
+      }
+      if (resTrash.ok) {
+        const trashData = await resTrash.json()
+        setTrashUsers(trashData.map(mapUserToFrontend))
+      }
+    } catch (err) {
+      console.error('Failed to fetch users:', err)
+    }
+  }
+
   useEffect(() => {
     fetchTickets()
+    fetchUsers()
   }, [])
 
   const createTicket = async (ticket) => {
     try {
-      const res = await fetch(API_URL, {
+      const res = await apiFetch('/api/tickets', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: ticket.subject,
-          description: ticket.subject, // Assuming description same as subject for now
+          description: ticket.subject,
           priority: ticket.priority || 'Normal',
           category: ticket.category || 'General',
           requestedBy: ticket.requester || 'User'
         })
       })
       if (res.ok) {
-        fetchTickets() // refresh the list
+        fetchTickets()
       }
     } catch (err) {
       console.error('Failed to create ticket:', err)
@@ -74,99 +96,119 @@ export function TicketProvider({ children }) {
   }
 
   const updateStatus = async (frontendId, status) => {
-    // optimistic UI
     setTickets((prev) => prev.map((t) => (t.id === frontendId ? { ...t, status } : t)))
-    
     const dbId = frontendId.replace('TCK-', '')
     try {
-      await fetch(`${API_URL}/${dbId}`, {
+      await apiFetch(`/api/tickets/${dbId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       })
     } catch (err) {
       console.error('Failed to update status:', err)
-      fetchTickets() // Revert on failure
+      fetchTickets()
     }
   }
 
   const updatePriority = async (frontendId, priority) => {
-    // optimistic UI
     setTickets((prev) => prev.map((t) => (t.id === frontendId ? { ...t, priority } : t)))
-    
     const dbId = frontendId.replace('TCK-', '')
     try {
-      await fetch(`${API_URL}/${dbId}`, {
+      await apiFetch(`/api/tickets/${dbId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priority })
       })
     } catch (err) {
       console.error('Failed to update priority:', err)
-      fetchTickets() // Revert on failure
+      fetchTickets()
     }
   }
 
   const deleteTicket = async (frontendId) => {
-    // optimistic UI
     setTickets((prev) => prev.filter((t) => t.id !== frontendId))
-
     const dbId = frontendId.replace('TCK-', '')
     try {
-      await fetch(`${API_URL}/${dbId}`, {
+      await apiFetch(`/api/tickets/${dbId}`, {
         method: 'DELETE'
       })
     } catch (err) {
       console.error('Failed to delete ticket:', err)
-      fetchTickets() // Revert on failure
+      fetchTickets()
     }
   }
 
-  const deleteUser = (userId) => {
-    const target = users.find((u) => u.id === userId)
-    if (!target) return
-    setUsers((prev) => prev.filter((u) => u.id !== userId))
-    setTrashUsers((prev) => [
-      {
-        ...target,
-        deletedAt: new Date().toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-      },
-      ...prev.filter((u) => u.id !== userId),
-    ])
+  const deleteUser = async (userId) => {
+    try {
+      const res = await apiFetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        fetchUsers()
+      } else {
+        const data = await res.json()
+        console.error('Delete user error:', data.message)
+      }
+    } catch (err) {
+      console.error('Failed to delete user:', err)
+    }
   }
 
-  const restoreUser = (userId) => {
-    const target = trashUsers.find((u) => u.id === userId)
-    if (!target) return
-    const { deletedAt, ...userToRestore } = target
-    setTrashUsers((prev) => prev.filter((u) => u.id !== userId))
-    setUsers((prev) => [...prev, userToRestore])
+  const restoreUser = async (userId) => {
+    try {
+      const res = await apiFetch(`/api/users/${userId}/restore`, {
+        method: 'PUT',
+      })
+      if (res.ok) {
+        fetchUsers()
+      } else {
+        const data = await res.json()
+        console.error('Restore user error:', data.message)
+      }
+    } catch (err) {
+      console.error('Failed to restore user:', err)
+    }
   }
 
-  const permanentlyDeleteUser = (userId) => {
-    setTrashUsers((prev) => prev.filter((u) => u.id !== userId))
+  const permanentlyDeleteUser = async (userId) => {
+    try {
+      const res = await apiFetch(`/api/users/${userId}/permanent`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        fetchUsers()
+      } else {
+        const data = await res.json()
+        console.error('Permanent delete user error:', data.message)
+      }
+    } catch (err) {
+      console.error('Failed to permanently delete user:', err)
+    }
   }
 
-  const emptyTrash = () => {
-    setTrashUsers([])
+  const emptyTrash = async () => {
+    try {
+      await Promise.all(
+        trashUsers.map((u) =>
+          apiFetch(`/api/users/${u.id}/permanent`, { method: 'DELETE' })
+        )
+      )
+      fetchUsers()
+    } catch (err) {
+      console.error('Failed to empty trash:', err)
+    }
   }
 
   return (
     <TicketContext.Provider
       value={{
         tickets,
+        fetchTickets,
         createTicket,
         updateStatus,
         updatePriority,
         deleteTicket,
         users,
         trashUsers,
+        fetchUsers,
         deleteUser,
         restoreUser,
         permanentlyDeleteUser,

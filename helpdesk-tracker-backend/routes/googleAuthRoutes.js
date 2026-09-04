@@ -13,9 +13,9 @@ router.get(
   '/google/callback',
   (req, res, next) => {
     passport.authenticate('google', { session: false }, (err, user, info) => {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
       if (err || !user) {
         console.error('Google OAuth authentication failed:', err || info);
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         return res.redirect(`${frontendUrl}/login?error=google_failed`);
       }
       // Successful authentication, issue complete JWT
@@ -29,7 +29,7 @@ router.get(
         process.env.JWT_SECRET || 'your_jwt_secret_key_here',
         { expiresIn: '1d' }
       );
-      const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/google-callback?token=${token}`;
+      const redirectUrl = `${frontendUrl}/google-callback?token=${token}`;
       res.redirect(redirectUrl);
     })(req, res, next);
   }
