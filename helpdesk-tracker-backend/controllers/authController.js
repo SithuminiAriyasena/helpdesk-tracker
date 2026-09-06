@@ -92,7 +92,9 @@ exports.login = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        avatar: user.avatar || null,
+        department: user.department || null,
       }
     });
   } catch (error) {
@@ -108,7 +110,8 @@ exports.me = async (req, res) => {
       return res.status(401).json({ message: 'Not authenticated' });
     }
 
-    const [rows] = await db.query('SELECT id, name, email, role FROM users WHERE id = ?', [userId]);
+    // include avatar and department so clients get persisted profile data
+    const [rows] = await db.query('SELECT id, name, email, role, avatar, department FROM users WHERE id = ?', [userId]);
     if (rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }

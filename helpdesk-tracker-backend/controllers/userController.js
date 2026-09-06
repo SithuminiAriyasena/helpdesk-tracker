@@ -4,7 +4,7 @@ const db = require('../config/db');
 exports.getUsers = async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT id, name, email, role, created_at FROM users WHERE deleted_at IS NULL ORDER BY created_at DESC'
+      'SELECT id, name, email, role, avatar, department, created_at FROM users WHERE deleted_at IS NULL ORDER BY created_at DESC'
     );
     res.json(rows);
   } catch (err) {
@@ -16,7 +16,7 @@ exports.getUsers = async (req, res) => {
 exports.getTrashedUsers = async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT id, name, email, role, created_at, deleted_at FROM users WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC'
+      'SELECT id, name, email, role, avatar, department, created_at, deleted_at FROM users WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC'
     );
     res.json(rows);
   } catch (err) {
@@ -71,6 +71,33 @@ exports.permanentDeleteUser = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     res.json({ message: 'User permanently deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// PUT /api/users/:id — update profile (name, department, avatar)
+exports.updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { name, department, avatar } = req.body;
+
+  // allow user to update their own profile or admin
+  if (parseInt(id) !== req.user.id && req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Not authorized to update this user' });
+  }
+
+  try {
+    const [result] = await db.query(
+      'UPDATE users SET name = COALESCE(?, name), department = COALESCE(?, department), avatar = COALESCE(?, avatar) WHERE id = ?',
+      [name || null, department || null, avatar || null, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const [rows] = await db.query('SELECT id, name, email, role, avatar, department FROM users WHERE id = ?', [id]);
+    res.json({ user: rows[0] });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
