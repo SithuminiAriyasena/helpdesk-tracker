@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { User, Shield, Eye, EyeOff } from 'lucide-react'
 import { apiFetch } from '../api.js'
+import { useAuth } from '../context/AuthContext.jsx'
+import { useTickets } from '../context/TicketContext.jsx'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -13,6 +15,8 @@ export default function Register() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const { user: currentUser } = useAuth()
+  const { fetchUsers } = useTickets()
 
   const validateEmail = (e) => {
     return String(e).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
@@ -56,8 +60,17 @@ export default function Register() {
         return
       }
 
-      // success - redirect to login with created flag
-      navigate('/login?created=1')
+      // success - if an admin created the account, refresh admin users list and go to admin users
+      if (currentUser && currentUser.role === 'admin') {
+        try {
+          await fetchUsers()
+        } catch (e) {
+          // ignore fetch error here
+        }
+        navigate('/admin/users')
+      } else {
+        navigate('/login?created=1')
+      }
     } catch (err) {
       console.error('Register error', err)
       setError('Network error. Please try again.')
